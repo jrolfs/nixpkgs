@@ -6,7 +6,7 @@
 , libiconv
 , Security
 , SystemConfiguration
-, xvfb-run
+, withXvfb-run ? lib.meta.availableOn stdenv.hostPlatform xvfb-run, xvfb-run
 , nixosTests
 }:
 
@@ -34,11 +34,11 @@ rustPlatform.buildRustPackage rec {
       --zsh <($out/bin/atuin gen-completions -s zsh)
   '';
 
-  nativeCheckInputs = lib.optionals xvfb-run.meta.available [
+  nativeCheckInputs = lib.optionals withXvfb-run [
     xvfb-run
   ];
 
-  checkPhase = lib.optionalString xvfb-run.meta.available ''
+  checkPhase = lib.optionalString withXvfb-run ''
     runHook preCheck
     xvfb-run cargo test
     runHook postCheck
